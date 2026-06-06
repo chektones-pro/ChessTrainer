@@ -134,6 +134,7 @@ hr { border:none; border-top:1px solid var(--border); margin:1.2rem 0; }
         ✗ Your move: <span class="move-label" id="banner-wrong-yours"></span>
         &nbsp;·&nbsp; Best: <span class="move-label" id="banner-wrong-best"></span>
       </div>
+      <div id="answer-notes-box" style="display:none;margin:0 1.2rem 0.2rem;padding:0.75rem 1rem;background:var(--surface2);border-left:3px solid var(--gold-dim);font-size:0.75rem;color:#b0a890;line-height:1.6;white-space:pre-wrap;border-radius:2px;"></div>
       <button class="btn primary" id="btn-next" style="display:none" onclick="nextPuzzle()">Next Puzzle →</button>
     </div>
     <div id="session-complete">
@@ -156,8 +157,10 @@ hr { border:none; border-top:1px solid var(--border); margin:1.2rem 0; }
       <input type="text" id="inp-best" placeholder="e.g. e2e4, d2d4">
       <label>Acceptable moves — 1 pt (UCI, comma-separated, optional)</label>
       <input type="text" id="inp-ok" placeholder="e.g. g1f3, c2c4">
-      <label>Description / Notes (optional)</label>
-      <textarea id="inp-desc" placeholder="e.g. Sicilian – back rank tactic&#10;Play Qxf7+ exploiting the pin"></textarea>
+      <label>Description (shown before — optional)</label>
+      <textarea id="inp-desc" placeholder="e.g. Sicilian – back rank tactic"></textarea>
+      <label>Answer notes (shown after — optional)</label>
+      <textarea id="inp-notes" placeholder="e.g. Qxf7+ works because the king is trapped"></textarea>
       <div class="error-msg" id="add-error"></div>
       <div class="success-msg" id="add-success"></div>
       <button class="btn primary" style="margin:0.8rem 0 0 0;width:100%;" onclick="addPuzzle()">Add Puzzle</button>
@@ -198,8 +201,10 @@ hr { border:none; border-top:1px solid var(--border); margin:1.2rem 0; }
   <input type="text" id="edit-best" placeholder="e.g. e2e4, d2d4">
   <label>Acceptable moves — 1 pt (optional)</label>
   <input type="text" id="edit-ok" placeholder="e.g. g1f3, c2c4">
-  <label>Description / Notes</label>
-  <textarea id="edit-desc" placeholder="Notes…"></textarea>
+  <label>Description (shown before)</label>
+  <textarea id="edit-desc" placeholder="Context before the move…"></textarea>
+  <label>Answer notes (shown after)</label>
+  <textarea id="edit-notes" placeholder="Explanation after the move…"></textarea>
   <div class="error-msg" id="edit-error"></div>
   <div style="display:flex;gap:0.6rem;margin-top:1rem;">
     <button class="btn primary" style="margin:0;flex:1;" onclick="saveEdit()">Save</button>
@@ -371,6 +376,14 @@ function submitMove(uci) {
     document.getElementById('banner-wrong').classList.add('show');
   }
 
+  // Show answer notes if present
+  const notesEl = document.getElementById('answer-notes-box');
+  if (puzzle.answer_notes) {
+    notesEl.textContent = puzzle.answer_notes;
+    notesEl.style.display = 'block';
+  } else {
+    notesEl.style.display = 'none';
+  }
   document.getElementById('move-hint').textContent='';
   document.getElementById('btn-next').style.display='block';
   updateStats();
@@ -405,6 +418,7 @@ function loadPuzzle() {
   document.getElementById('banner-wrong').classList.remove('show');
   document.getElementById('btn-next').style.display='none';
   document.getElementById('move-hint').textContent='Tap a piece to select it';
+  document.getElementById('answer-notes-box').style.display='none';
   document.querySelectorAll('[style*="rgba(201"]').forEach(el=>el.style.background='');
   updateStats();
   setTimeout(()=>initBoard(puzzle.fen,flipped),30);
@@ -440,6 +454,7 @@ function addPuzzle() {
   const best = document.getElementById('inp-best').value.trim();
   const ok   = document.getElementById('inp-ok').value.trim();
   const desc = document.getElementById('inp-desc').value.trim();
+  const notes = document.getElementById('inp-notes').value.trim();
   const errEl=document.getElementById('add-error'), okEl=document.getElementById('add-success');
   errEl.textContent=''; okEl.textContent='';
 
@@ -453,13 +468,14 @@ function addPuzzle() {
   if (!okCheck.ok) { errEl.textContent='Acceptable moves error: '+okCheck.err; return; }
 
   const puzzles=loadPuzzles();
-  puzzles.push({id:uid(), fen, best_moves:bestCheck.moves, ok_moves:okCheck.moves, description:desc});
+  puzzles.push({id:uid(), fen, best_moves:bestCheck.moves, ok_moves:okCheck.moves, description:desc, answer_notes:notes});
   savePuzzles(puzzles);
 
   document.getElementById('inp-fen').value='';
   document.getElementById('inp-best').value='';
   document.getElementById('inp-ok').value='';
   document.getElementById('inp-desc').value='';
+  document.getElementById('inp-notes').value='';
   const san=bestCheck.moves.map(m=>uciToSan(fen,m)).join(' / ');
   okEl.textContent=`✓ Added — best: ${san}`;
   setTimeout(()=>okEl.textContent='',3000);
@@ -480,6 +496,7 @@ function openEdit(id) {
   document.getElementById('edit-best').value=(p.best_moves||[p.best_move||'']).join(', ');
   document.getElementById('edit-ok').value=(p.ok_moves||[]).join(', ');
   document.getElementById('edit-desc').value=p.description||'';
+  document.getElementById('edit-notes').value=p.answer_notes||'';
   document.getElementById('edit-error').textContent='';
   document.getElementById('edit-modal').classList.add('open');
 }
@@ -494,6 +511,7 @@ function saveEdit() {
   const best = document.getElementById('edit-best').value.trim();
   const ok   = document.getElementById('edit-ok').value.trim();
   const desc = document.getElementById('edit-desc').value.trim();
+  const notes = document.getElementById('edit-notes').value.trim();
   const errEl=document.getElementById('edit-error');
   errEl.textContent='';
 
@@ -506,7 +524,7 @@ function saveEdit() {
   if (!okCheck.ok) { errEl.textContent='Acceptable moves error: '+okCheck.err; return; }
 
   const puzzles=loadPuzzles().map(p=>p.id===id
-    ? {...p, fen, best_moves:bestCheck.moves, ok_moves:okCheck.moves, description:desc}
+    ? {...p, fen, best_moves:bestCheck.moves, ok_moves:okCheck.moves, description:desc, answer_notes:notes}
     : p);
   savePuzzles(puzzles);
   closeEdit();
@@ -530,6 +548,7 @@ function renderPuzzleList() {
         <div class="puzzle-item-fen">${escHtml(p.fen)}</div>
         ${p.ok_moves&&p.ok_moves.length?`<div style="font-size:0.6rem;color:var(--muted);margin-top:0.3rem;">Also ok: ${p.ok_moves.map(m=>uciToSan(p.fen,m)).join(', ')}</div>`:''}
         ${p.description?`<div style="font-size:0.65rem;color:#9a9080;margin-top:0.4rem;white-space:pre-wrap;">${escHtml(p.description)}</div>`:''}
+        ${p.answer_notes?`<div style="font-size:0.65rem;color:var(--muted);margin-top:0.3rem;white-space:pre-wrap;"><span style="color:var(--gold-dim);font-size:0.55rem;letter-spacing:0.1em;text-transform:uppercase;">Answer notes: </span>${escHtml(p.answer_notes)}</div>`:''}
         <div class="item-actions">
           <button class="edit-btn" onclick="openEdit('${p.id}')">✏ Edit</button>
           <button class="del-btn" onclick="deletePuzzle('${p.id}')">🗑 Delete</button>
