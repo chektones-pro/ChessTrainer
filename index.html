@@ -589,7 +589,7 @@ function importPuzzles(event) {
         const key=p.fen+'|'+(p.best_moves||[p.best_move]).join(',');
         if (existIds.has(p.id)||existKeys.has(key)){skipped++;continue;}
         // Normalise old format
-        const entry={id:p.id||uid(), fen:p.fen, best_moves:p.best_moves||[p.best_move], ok_moves:p.ok_moves||[], description:p.description||''};
+        const entry={id:p.id||uid(), fen:p.fen, best_moves:p.best_moves||[p.best_move], ok_moves:p.ok_moves||[], description:p.description||'', answer_notes:p.answer_notes||''};
         existing.push(entry); existIds.add(entry.id); existKeys.add(key); added++;
       }
       savePuzzles(existing);
