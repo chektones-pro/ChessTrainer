@@ -29,7 +29,9 @@ header .sub{font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-
 .stats-bar b{color:var(--gold);font-weight:500;}
 .side-badge{display:inline-block;margin:0.8rem 1.2rem 0.4rem;padding:0.2rem 0.6rem;border:1px solid var(--gold-dim);font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);}
 .line-badge{display:inline-block;margin:0 0 0 0.5rem;padding:0.2rem 0.5rem;border:1px solid var(--blue-hl);font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--blue-hl);vertical-align:middle;}
-.line-progress{margin:0 1.2rem 0.4rem;font-size:0.6rem;color:var(--blue-hl);letter-spacing:0.08em;}
+.line-title{margin:0 1.2rem 0.2rem;font-size:0.65rem;color:var(--blue-hl);letter-spacing:0.06em;}
+.line-progress{margin:0 1.2rem 0.4rem;font-size:0.6rem;color:var(--muted);letter-spacing:0.08em;}
+.puzzle-title{margin:0.6rem 1.2rem 0.1rem;font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold);font-weight:700;}
 .puzzle-desc{margin:0 1.2rem 0.6rem;font-size:0.75rem;color:#b0a890;line-height:1.55;white-space:pre-wrap;}
 #board-wrap{padding:0 1rem;margin:0.5rem 0;display:flex;justify-content:center;}
 #board-wrap>div{width:100%!important;max-width:400px;}
@@ -59,10 +61,11 @@ header .sub{font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-
 .manage-section{padding:1rem 1.2rem 0.5rem;}
 .manage-section h2{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold);margin-bottom:1rem;font-weight:700;}
 label{display:block;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:0.3rem;margin-top:0.8rem;}
-input[type="text"],textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:0.75rem;padding:0.6rem 0.75rem;border-radius:2px;outline:none;transition:border-color 0.15s;resize:vertical;}
-input[type="text"]:focus,textarea:focus{border-color:var(--gold-dim);}
-input[type="text"]::placeholder,textarea::placeholder{color:var(--muted);}
+input[type="text"],input[type="number"],textarea,select{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:0.75rem;padding:0.6rem 0.75rem;border-radius:2px;outline:none;transition:border-color 0.15s;resize:vertical;}
+input[type="text"]:focus,input[type="number"]:focus,textarea:focus,select:focus{border-color:var(--gold-dim);}
+input[type="text"]::placeholder,input[type="number"]::placeholder,textarea::placeholder{color:var(--muted);}
 textarea{min-height:4rem;line-height:1.5;}
+select option{background:var(--surface2);}
 .error-msg{font-size:0.65rem;color:var(--red-hl);margin-top:0.3rem;min-height:1rem;}
 .success-msg{font-size:0.65rem;color:var(--green-hl);margin-top:0.3rem;min-height:1rem;}
 hr{border:none;border-top:1px solid var(--border);margin:1.2rem 0;}
@@ -76,17 +79,18 @@ hr{border:none;border-top:1px solid var(--border);margin:1.2rem 0;}
 .puzzle-item-body.open{display:block;}
 .puzzle-item-fen{font-size:0.6rem;color:var(--muted);word-break:break-all;margin:0.5rem 0;line-height:1.5;}
 .item-actions{display:flex;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap;}
-.edit-btn,.del-btn{display:inline-block;padding:0.3rem 0.7rem;background:transparent;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:2px;}
+.edit-btn,.del-btn,.study-btn{display:inline-block;padding:0.3rem 0.7rem;background:transparent;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:2px;}
 .edit-btn{border:1px solid var(--gold-dim);color:var(--gold);}
 .edit-btn:active{background:var(--gold-dim);}
 .del-btn{border:1px solid var(--red-hl);color:var(--red-hl);}
 .del-btn:active{background:var(--red);}
+.study-btn{border:1px solid var(--blue-hl);color:var(--blue-hl);}
+.study-btn:active{background:var(--blue);}
 /* Edit modal */
 #edit-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:100;padding:1.2rem 1.2rem 4rem;overflow-y:auto;}
 #edit-modal.open{display:block;}
 #edit-modal h2{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--gold);margin-bottom:1rem;}
 #edit-modal h3{font-family:'Playfair Display',serif;font-size:0.95rem;color:var(--blue-hl);margin:1.4rem 0 0.6rem;border-top:1px solid var(--border);padding-top:1.2rem;}
-/* Sub-puzzle list inside edit modal */
 .sub-item{background:var(--surface);border:1px solid var(--border);border-radius:2px;margin-bottom:0.5rem;overflow:hidden;}
 .sub-item-header{display:flex;align-items:center;gap:0.5rem;padding:0.55rem 0.7rem;cursor:pointer;}
 .sub-item-header:active{background:var(--surface2);}
@@ -99,9 +103,13 @@ hr{border:none;border-top:1px solid var(--border);margin:1.2rem 0;}
 .sub-ctrl.del{border-color:var(--red-hl);color:var(--red-hl);}
 .sub-item-body{display:none;padding:0.6rem 0.7rem 0.7rem;border-top:1px solid var(--border);background:var(--surface2);}
 .sub-item-body.open{display:block;}
-/* Add sub-puzzle box */
-.sub-add-box{border:1px dashed var(--blue-hl);border-radius:2px;padding:0.8rem;margin-top:0.6rem;}
-.sub-add-box .sub-add-title{font-size:0.6rem;color:var(--blue-hl);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;}
+.sub-add-box{border:1px dashed var(--gold-dim);border-radius:2px;padding:0.8rem;margin-top:0.6rem;}
+.sub-add-box .sub-add-title{font-size:0.6rem;color:var(--gold);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;}
+.pgn-box{border:1px dashed var(--blue-hl);border-radius:2px;padding:0.8rem;margin-top:0.6rem;}
+.pgn-box .pgn-title{font-size:0.6rem;color:var(--blue-hl);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;}
+.pgn-row{display:flex;gap:0.5rem;align-items:flex-end;margin-top:0.5rem;}
+.pgn-row>div{flex:1;}
+.pgn-row input{width:100%;}
 .top-actions{padding:0.8rem 1.2rem 0;display:flex;gap:0.5rem;}
 .top-actions .btn{width:auto;flex:1;margin:0;}
 .progress-bar-wrap{height:2px;background:var(--border);}
@@ -132,7 +140,9 @@ hr{border:none;border-top:1px solid var(--border);margin:1.2rem 0;}
         <span>Acc <b id="stat-acc">—</b></span>
       </div>
       <span class="side-badge" id="side-badge">White to move</span><span class="line-badge" id="line-badge" style="display:none">Study Line</span>
+      <div class="line-title" id="line-title" style="display:none"></div>
       <div class="line-progress" id="line-progress" style="display:none"></div>
+      <div class="puzzle-title" id="puzzle-title" style="display:none"></div>
       <div class="puzzle-desc" id="puzzle-desc"></div>
       <div id="board-wrap"><div id="chessboard"></div></div>
       <div class="move-hint" id="move-hint">Tap a piece to select it</div>
@@ -169,6 +179,8 @@ hr{border:none;border-top:1px solid var(--border);margin:1.2rem 0;}
   <div id="panel-manage" class="panel">
     <div class="manage-section">
       <h2>Add Puzzle</h2>
+      <label>Title</label>
+      <input type="text" id="inp-title" placeholder="e.g. Evans Gambit — Qb3 main line">
       <label>FEN</label>
       <input type="text" id="inp-fen" placeholder="Paste FEN string here…">
       <label>Best moves — 2 pts (UCI, comma-separated)</label>
@@ -179,10 +191,37 @@ hr{border:none;border-top:1px solid var(--border);margin:1.2rem 0;}
       <textarea id="inp-desc" placeholder="e.g. KID — find the key break"></textarea>
       <label>Answer notes (shown after — optional)</label>
       <textarea id="inp-notes" placeholder="e.g. h5 threatens h4 kicking the knight…"></textarea>
+
+      <!-- PGN import for new puzzle -->
+      <div class="pgn-box" style="margin-top:1rem;">
+        <div class="pgn-title">⚡ Create from PGN instead</div>
+        <div style="font-size:0.6rem;color:var(--muted);line-height:1.6;margin-bottom:0.5rem;">
+          Paste a PGN, set your color and the move number where the puzzle starts. Creates the root puzzle + all sub-puzzles automatically.
+        </div>
+        <textarea id="inp-pgn" placeholder="Paste PGN here…" style="min-height:5rem;font-size:0.68rem;"></textarea>
+        <div class="pgn-row">
+          <div>
+            <label>You are</label>
+            <select id="inp-pgn-color">
+              <option value="w">White</option>
+              <option value="b">Black</option>
+            </select>
+          </div>
+          <div>
+            <label>Start at move #</label>
+            <input type="number" id="inp-pgn-move" value="1" min="1" style="min-width:0;">
+          </div>
+        </div>
+        <div class="error-msg" id="pgn-add-error"></div>
+        <div class="success-msg" id="pgn-add-success"></div>
+        <button class="btn blue" style="margin:0.6rem 0 0 0;width:100%;" onclick="createFromPgn()">⚡ Generate Puzzle from PGN</button>
+      </div>
+
       <div class="error-msg" id="add-error"></div>
       <div class="success-msg" id="add-success"></div>
-      <button class="btn primary" style="margin:0.8rem 0 0 0;width:100%;" onclick="addPuzzle()">Add Puzzle</button>
+      <button class="btn primary" style="margin:0.8rem 0 0 0;width:100%;" onclick="addPuzzle()">Add Puzzle Manually</button>
     </div>
+
     <hr style="margin:0.5rem 1.2rem;">
     <div class="manage-section">
       <h2>Backup &amp; Restore</h2>
@@ -197,6 +236,7 @@ hr{border:none;border-top:1px solid var(--border);margin:1.2rem 0;}
         All puzzles + sub-puzzles exported together. Import merges — duplicates skipped.
       </div>
     </div>
+
     <hr style="margin:0.5rem 1.2rem;">
     <div class="manage-section" style="padding-bottom:0;">
       <h2>Your Puzzles <span id="puzzle-count" style="font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace;font-weight:400;"></span></h2>
@@ -210,6 +250,8 @@ hr{border:none;border-top:1px solid var(--border);margin:1.2rem 0;}
   <h2>Edit Puzzle</h2>
   <input type="hidden" id="edit-id">
 
+  <label>Title</label>
+  <input type="text" id="edit-title" placeholder="e.g. Evans Gambit — Qb3 main line">
   <label>FEN</label>
   <input type="text" id="edit-fen" placeholder="FEN">
   <label>Best moves — 2 pts (UCI, comma-separated)</label>
@@ -224,13 +266,38 @@ hr{border:none;border-top:1px solid var(--border);margin:1.2rem 0;}
 
   <h3>Study Line — Sub-puzzles</h3>
   <div style="font-size:0.62rem;color:var(--muted);margin-bottom:0.8rem;line-height:1.6;">
-    Each sub-puzzle plays after this one when <b style="color:var(--blue-hl)">→ Study Line</b> is tapped. Same fields as any puzzle.
+    Each sub-puzzle plays in sequence when <b style="color:var(--blue-hl)">→ Study Line</b> is tapped during training.
   </div>
   <div id="sub-list"></div>
 
-  <!-- Add sub-puzzle box -->
+  <!-- PGN import for sub-puzzles -->
+  <div class="pgn-box">
+    <div class="pgn-title">⚡ Append sub-puzzles from PGN</div>
+    <div style="font-size:0.6rem;color:var(--muted);line-height:1.6;margin-bottom:0.5rem;">
+      Appends new sub-puzzles from a PGN branch. Existing sub-puzzles are kept.
+    </div>
+    <textarea id="edit-pgn" placeholder="Paste PGN here…" style="min-height:5rem;font-size:0.68rem;"></textarea>
+    <div class="pgn-row">
+      <div>
+        <label>You are</label>
+        <select id="edit-pgn-color">
+          <option value="w">White</option>
+          <option value="b">Black</option>
+        </select>
+      </div>
+      <div>
+        <label>Start at move #</label>
+        <input type="number" id="edit-pgn-move" value="1" min="1" style="min-width:0;">
+      </div>
+    </div>
+    <div class="error-msg" id="edit-pgn-error"></div>
+    <div class="success-msg" id="edit-pgn-success"></div>
+    <button class="btn blue" style="margin:0.6rem 0 0 0;width:100%;" onclick="appendPgnSubs()">⚡ Append from PGN</button>
+  </div>
+
+  <!-- Manual sub-puzzle add -->
   <div class="sub-add-box">
-    <div class="sub-add-title">+ Add Sub-puzzle</div>
+    <div class="sub-add-title">+ Add Sub-puzzle Manually</div>
     <label>FEN</label>
     <input type="text" id="sub-fen" placeholder="FEN for this position">
     <label>Best moves — 2 pts (UCI, comma-separated)</label>
@@ -242,7 +309,7 @@ hr{border:none;border-top:1px solid var(--border);margin:1.2rem 0;}
     <label>Answer notes (shown after)</label>
     <textarea id="sub-notes" placeholder="Explanation…" style="min-height:3rem;"></textarea>
     <div class="error-msg" id="sub-error"></div>
-    <button class="btn blue" style="margin:0.6rem 0 0 0;width:100%;" onclick="addSubPuzzle()">+ Add Sub-puzzle</button>
+    <button class="btn" style="margin:0.6rem 0 0 0;width:100%;border-color:var(--gold-dim);color:var(--gold);" onclick="addSubPuzzle()">+ Add Sub-puzzle</button>
   </div>
 
   <div style="display:flex;gap:0.6rem;margin-top:1.2rem;">
@@ -274,6 +341,67 @@ function parseMoves(fen,raw){
   return{ok:true,moves:parts};
 }
 
+// ── PGN → puzzles ─────────────────────────────────────────────────────────────
+// Returns {root, subs} or throws string error
+// playerColor: 'w' or 'b', startMove: 1-based move number
+function pgnToPuzzles(pgn, playerColor, startMove){
+  const game = new Chess();
+  if(!game.load_pgn(pgn)) throw 'Could not parse PGN. Make sure it is valid.';
+
+  const history = game.history({verbose:true});
+  if(!history.length) throw 'PGN has no moves.';
+
+  // Replay from scratch to collect FENs
+  const replay = new Chess();
+  const states = [{fen: replay.fen(), moveNum: 0, color: null, san: null, uci: null}];
+  for(const mv of history){
+    const uci = mv.from + mv.to + (mv.promotion||'');
+    const san = mv.san;
+    const color = mv.color; // 'w' or 'b'
+    // moveNum increments after black moves (full moves)
+    const moveNum = Math.ceil(states.length / 2);
+    replay.move(mv);
+    states.push({fen: replay.fen(), moveNum, color, san, uci});
+  }
+
+  // Find positions where it's the player's turn, starting from startMove
+  // states[i].fen = position AFTER move i; we want position BEFORE player's move
+  // We need to find indices where the move played is by playerColor AND moveNum >= startMove
+
+  const puzzles = [];
+  for(let i = 0; i < states.length - 1; i++){
+    const nextMove = states[i+1]; // the move about to be played from states[i]
+    if(nextMove.color !== playerColor) continue;
+
+    // Full move number: in chess, white's move N starts at ply 2*(N-1), black's at 2*(N-1)+1
+    const fullMove = Math.floor(i/2) + 1;
+    if(fullMove < startMove) continue;
+
+    const fenBefore = states[i].fen;
+    const uci = nextMove.uci;
+    const san = nextMove.san;
+
+    // Determine what the previous move was (for description)
+    const prevMove = states[i];
+    const prevDesc = prevMove.color
+      ? `After ${prevMove.color==='w'?'White':'Black'} plays ${prevMove.san}`
+      : 'Opening position';
+
+    puzzles.push({
+      fen: fenBefore,
+      best_moves: [uci],
+      ok_moves: [],
+      description: `Move ${fullMove} — ${prevDesc}. ${playerColor==='w'?'White':'Black'} to play.`,
+      answer_notes: `Best: ${san}`,
+      sub_puzzles: []
+    });
+  }
+
+  if(!puzzles.length) throw `No moves found for ${playerColor==='w'?'White':'Black'} from move ${startMove}.`;
+
+  return puzzles;
+}
+
 // ── Tab switching ─────────────────────────────────────────────────────────────
 function switchTab(tab){
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',['train','manage'][i]===tab));
@@ -286,10 +414,7 @@ function switchTab(tab){
 let board=null;
 let session={puzzles:[],idx:0,points:0,maxPoints:0,total:0};
 let selectedFrom=null,revealed=false;
-// Study line state
-let lineQueue=[];      // remaining sub-puzzles to play
-let inLine=false;      // are we currently in a line?
-let lineCurrent=null;  // current sub-puzzle object
+let lineQueue=[],inLine=false,lineCurrent=null,lineRootTitle='';
 
 function initBoard(fen,flipped){
   if(board){board.destroy();board=null;}
@@ -309,9 +434,7 @@ function handleBoardClick(e){
   if(el)onSquareClick(el.getAttribute('data-square'));
 }
 
-function activePuzzle(){
-  return inLine&&lineCurrent ? lineCurrent : session.puzzles[session.idx];
-}
+function activePuzzle(){return inLine&&lineCurrent?lineCurrent:session.puzzles[session.idx];}
 
 function onSquareClick(sq){
   if(revealed)return;
@@ -358,11 +481,8 @@ function submitMove(uci){
   else if(okMoves.map(m=>m.toLowerCase()).includes(played)){pts=1;isOk=true;}
 
   revealed=true;
-  session.total++;
-  session.points+=pts;
-  session.maxPoints+=2;
+  session.total++;session.points+=pts;session.maxPoints+=2;
 
-  // Show best move on board
   const best=bestMoves[0];
   const game=new Chess(puzzle.fen);
   game.move({from:best.slice(0,2),to:best.slice(2,4),promotion:best[4]||undefined});
@@ -375,9 +495,7 @@ function submitMove(uci){
   const bestSan=bestMoves.map(m=>uciToSan(puzzle.fen,m)).join(' / ');
   const yourSan=uciToSan(puzzle.fen,played);
 
-  document.getElementById('banner-correct').classList.remove('show');
-  document.getElementById('banner-partial').classList.remove('show');
-  document.getElementById('banner-wrong').classList.remove('show');
+  ['banner-correct','banner-partial','banner-wrong'].forEach(id=>document.getElementById(id).classList.remove('show'));
   if(isBest){
     document.getElementById('banner-correct-move').textContent=yourSan;
     document.getElementById('banner-correct').classList.add('show');
@@ -391,28 +509,21 @@ function submitMove(uci){
     document.getElementById('banner-wrong').classList.add('show');
   }
 
-  const notes=puzzle.answer_notes||'';
   const nb=document.getElementById('answer-notes-box');
+  const notes=puzzle.answer_notes||'';
   if(notes){nb.textContent=notes;nb.style.display='block';}else{nb.style.display='none';}
 
   document.getElementById('btn-row').style.display='block';
-
-  // Study Line button: show if more in queue, or if root puzzle has sub-puzzles
   const lineBtn=document.getElementById('btn-study-line');
   if(lineQueue.length>0){
     lineBtn.style.display='block';
   }else if(!inLine){
-    const subs=(puzzle.sub_puzzles||[]);
-    if(subs.length>0){
-      lineQueue=[...subs];
-      lineBtn.style.display='block';
-    }else{
-      lineBtn.style.display='none';
-    }
+    const subs=puzzle.sub_puzzles||[];
+    if(subs.length>0){lineQueue=[...subs];lineBtn.style.display='block';}
+    else lineBtn.style.display='none';
   }else{
     lineBtn.style.display='none';
   }
-
   updateStats();
 }
 
@@ -421,16 +532,16 @@ function studyLineNext(){
   if(!lineQueue.length)return;
   lineCurrent=lineQueue.shift();
   inLine=true;
-
   const rootPuzzle=session.puzzles[session.idx];
   const totalSubs=(rootPuzzle.sub_puzzles||[]).length;
-  const remaining=lineQueue.length;
-  const stepNum=totalSubs-remaining;
-
+  const stepNum=totalSubs-lineQueue.length;
   document.getElementById('line-badge').style.display='inline-block';
+  if(lineRootTitle){
+    document.getElementById('line-title').style.display='block';
+    document.getElementById('line-title').textContent=lineRootTitle;
+  }
   document.getElementById('line-progress').style.display='block';
   document.getElementById('line-progress').textContent=`Step ${stepNum} of ${totalSubs}`;
-
   loadPuzzleData(lineCurrent);
 }
 
@@ -445,16 +556,32 @@ function loadAndShuffle(){
   }
   for(let i=puzzles.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[puzzles[i],puzzles[j]]=[puzzles[j],puzzles[i]];}
   session={puzzles,idx:0,points:0,maxPoints:0,total:0};
-  inLine=false;lineCurrent=null;lineQueue=[];
+  inLine=false;lineCurrent=null;lineQueue=[];lineRootTitle='';
   document.getElementById('train-empty').style.display='none';
   document.getElementById('session-complete').style.display='none';
   document.getElementById('train-content').style.display='block';
   loadPuzzle();
 }
 
+// Study a specific puzzle directly from Manage
+function studyPuzzleById(id){
+  const puzzles=loadPuzzles();
+  const p=puzzles.find(p=>p.id===id);
+  if(!p)return;
+  session={puzzles:[p],idx:0,points:0,maxPoints:0,total:0};
+  inLine=false;lineCurrent=null;lineQueue=[];lineRootTitle=p.title||'';
+  document.getElementById('train-empty').style.display='none';
+  document.getElementById('session-complete').style.display='none';
+  document.getElementById('train-content').style.display='block';
+  switchTab('train');
+  loadPuzzle();
+}
+
 function loadPuzzle(){
   inLine=false;lineCurrent=null;lineQueue=[];
+  lineRootTitle=session.puzzles[session.idx].title||'';
   document.getElementById('line-badge').style.display='none';
+  document.getElementById('line-title').style.display='none';
   document.getElementById('line-progress').style.display='none';
   loadPuzzleData(session.puzzles[session.idx]);
 }
@@ -462,10 +589,12 @@ function loadPuzzle(){
 function loadPuzzleData(puzzle){
   const flipped=puzzle.fen.includes(' b ');
   document.getElementById('side-badge').textContent=flipped?'Black to move':'White to move';
+  // Show title for root puzzle only
+  const titleEl=document.getElementById('puzzle-title');
+  if(!inLine&&puzzle.title){titleEl.textContent=puzzle.title;titleEl.style.display='block';}
+  else titleEl.style.display='none';
   document.getElementById('puzzle-desc').textContent=puzzle.description||'';
-  document.getElementById('banner-correct').classList.remove('show');
-  document.getElementById('banner-partial').classList.remove('show');
-  document.getElementById('banner-wrong').classList.remove('show');
+  ['banner-correct','banner-partial','banner-wrong'].forEach(id=>document.getElementById(id).classList.remove('show'));
   document.getElementById('answer-notes-box').style.display='none';
   document.getElementById('btn-row').style.display='none';
   document.getElementById('btn-study-line').style.display='none';
@@ -476,8 +605,9 @@ function loadPuzzleData(puzzle){
 }
 
 function nextPuzzle(){
-  inLine=false;lineCurrent=null;lineQueue=[];
+  inLine=false;lineCurrent=null;lineQueue=[];lineRootTitle='';
   document.getElementById('line-badge').style.display='none';
+  document.getElementById('line-title').style.display='none';
   document.getElementById('line-progress').style.display='none';
   session.idx++;
   if(session.idx>=session.puzzles.length){showSessionComplete();return;}
@@ -501,8 +631,55 @@ function updateStats(){
   document.getElementById('progress-bar').style.width=`${(session.idx/session.puzzles.length)*100}%`;
 }
 
+// ── PGN create / append ───────────────────────────────────────────────────────
+function createFromPgn(){
+  const pgn=document.getElementById('inp-pgn').value.trim();
+  const color=document.getElementById('inp-pgn-color').value;
+  const startMove=parseInt(document.getElementById('inp-pgn-move').value)||1;
+  const titleVal=document.getElementById('inp-title').value.trim();
+  const errEl=document.getElementById('pgn-add-error'),okEl=document.getElementById('pgn-add-success');
+  errEl.textContent='';okEl.textContent='';
+  if(!pgn){errEl.textContent='Paste a PGN first.';return;}
+  try{
+    const puzzles=pgnToPuzzles(pgn,color,startMove);
+    if(!puzzles.length){errEl.textContent='No positions found.';return;}
+    const root=puzzles[0];
+    root.id=uid();
+    root.title=titleVal||`PGN import — ${color==='w'?'White':'Black'} from move ${startMove}`;
+    root.sub_puzzles=puzzles.slice(1).map(p=>({...p,id:undefined}));
+    const existing=loadPuzzles();
+    existing.push(root);
+    savePuzzles(existing);
+    // Clear inputs
+    ['inp-pgn','inp-title','inp-fen','inp-best','inp-ok','inp-desc','inp-notes'].forEach(id=>document.getElementById(id).value='');
+    okEl.textContent=`✓ Created puzzle with ${root.sub_puzzles.length} sub-puzzle${root.sub_puzzles.length!==1?'s':''}.`;
+    setTimeout(()=>okEl.textContent='',4000);
+    renderPuzzleList();
+  }catch(e){errEl.textContent=typeof e==='string'?e:e.message;}
+}
+
+function appendPgnSubs(){
+  const pgn=document.getElementById('edit-pgn').value.trim();
+  const color=document.getElementById('edit-pgn-color').value;
+  const startMove=parseInt(document.getElementById('edit-pgn-move').value)||1;
+  const errEl=document.getElementById('edit-pgn-error'),okEl=document.getElementById('edit-pgn-success');
+  errEl.textContent='';okEl.textContent='';
+  if(!pgn){errEl.textContent='Paste a PGN first.';return;}
+  try{
+    const puzzles=pgnToPuzzles(pgn,color,startMove);
+    // All positions become sub-puzzles (appended to existing)
+    const newSubs=puzzles.map(p=>({...p,id:undefined,sub_puzzles:undefined}));
+    editSubs=[...editSubs,...newSubs];
+    document.getElementById('edit-pgn').value='';
+    okEl.textContent=`✓ Appended ${newSubs.length} sub-puzzle${newSubs.length!==1?'s':''}.`;
+    setTimeout(()=>okEl.textContent='',3000);
+    renderSubList();
+  }catch(e){errEl.textContent=typeof e==='string'?e:e.message;}
+}
+
 // ── Manage ────────────────────────────────────────────────────────────────────
 function addPuzzle(){
+  const title=document.getElementById('inp-title').value.trim();
   const fen=document.getElementById('inp-fen').value.trim();
   const best=document.getElementById('inp-best').value.trim();
   const ok=document.getElementById('inp-ok').value.trim();
@@ -515,9 +692,9 @@ function addPuzzle(){
   const bestCheck=parseMoves(fen,best);if(!bestCheck.ok||!bestCheck.moves.length){errEl.textContent='Best moves error: '+(bestCheck.err||'required');return;}
   const okCheck=parseMoves(fen,ok);if(!okCheck.ok){errEl.textContent='Acceptable moves error: '+okCheck.err;return;}
   const puzzles=loadPuzzles();
-  puzzles.push({id:uid(),fen,best_moves:bestCheck.moves,ok_moves:okCheck.moves,description:desc,answer_notes:notes,sub_puzzles:[]});
+  puzzles.push({id:uid(),title,fen,best_moves:bestCheck.moves,ok_moves:okCheck.moves,description:desc,answer_notes:notes,sub_puzzles:[]});
   savePuzzles(puzzles);
-  ['inp-fen','inp-best','inp-ok','inp-desc','inp-notes'].forEach(id=>document.getElementById(id).value='');
+  ['inp-title','inp-fen','inp-best','inp-ok','inp-desc','inp-notes'].forEach(id=>document.getElementById(id).value='');
   okEl.textContent=`✓ Added — best: ${bestCheck.moves.map(m=>uciToSan(fen,m)).join(' / ')}`;
   setTimeout(()=>okEl.textContent='',3000);
   renderPuzzleList();
@@ -536,7 +713,7 @@ function renderPuzzleList(){
   if(!puzzles.length){list.innerHTML='<div class="empty-state">No puzzles yet.</div>';return;}
   list.innerHTML=puzzles.map(p=>{
     const bestMoves=(p.best_moves||[p.best_move||'']).map(m=>uciToSan(p.fen,m)).join(' / ');
-    const label=p.description?p.description.split('\n')[0]:bestMoves;
+    const label=p.title||(p.description?p.description.split('\n')[0]:bestMoves);
     const subCount=(p.sub_puzzles||[]).length;
     return `<div class="puzzle-item">
       <div class="puzzle-item-header" onclick="toggleItem('${p.id}')">
@@ -544,6 +721,7 @@ function renderPuzzleList(){
         <span class="puzzle-item-move">${escHtml(bestMoves)}${subCount?` <span style="color:var(--blue-hl);font-size:0.55rem;">+${subCount}</span>`:''}</span>
       </div>
       <div class="puzzle-item-body" id="item-${p.id}">
+        ${p.title?`<div style="font-size:0.65rem;color:var(--gold);margin-top:0.4rem;font-family:'Playfair Display',serif;">${escHtml(p.title)}</div>`:''}
         <div class="puzzle-item-fen">${escHtml(p.fen)}</div>
         ${p.ok_moves&&p.ok_moves.length?`<div style="font-size:0.6rem;color:var(--muted);margin-top:0.3rem;">Also ok: ${p.ok_moves.map(m=>uciToSan(p.fen,m)).join(', ')}</div>`:''}
         ${p.description?`<div style="font-size:0.65rem;color:#9a9080;margin-top:0.4rem;white-space:pre-wrap;">${escHtml(p.description)}</div>`:''}
@@ -551,6 +729,7 @@ function renderPuzzleList(){
         ${subCount?`<div style="font-size:0.6rem;color:var(--blue-hl);margin-top:0.3rem;">→ ${subCount} sub-puzzle${subCount>1?'s':''} in line</div>`:''}
         <div class="item-actions">
           <button class="edit-btn" onclick="openEdit('${p.id}')">✏ Edit</button>
+          ${subCount?`<button class="study-btn" onclick="studyPuzzleById('${p.id}')">▶ Study Line</button>`:''}
           <button class="del-btn" onclick="deletePuzzle('${p.id}')">🗑 Delete</button>
         </div>
       </div>
@@ -561,19 +740,22 @@ function renderPuzzleList(){
 function toggleItem(id){const b=document.getElementById('item-'+id);if(b)b.classList.toggle('open');}
 
 // ── Edit modal + sub-puzzles ──────────────────────────────────────────────────
-let editSubs=[];  // working copy of sub_puzzles while modal open
+let editSubs=[];
 
 function openEdit(id){
   const p=loadPuzzles().find(p=>p.id===id);
   if(!p)return;
   document.getElementById('edit-id').value=p.id;
+  document.getElementById('edit-title').value=p.title||'';
   document.getElementById('edit-fen').value=p.fen;
   document.getElementById('edit-best').value=(p.best_moves||[p.best_move||'']).join(', ');
   document.getElementById('edit-ok').value=(p.ok_moves||[]).join(', ');
   document.getElementById('edit-desc').value=p.description||'';
   document.getElementById('edit-notes').value=p.answer_notes||'';
   document.getElementById('edit-error').textContent='';
-  // Clear sub-puzzle add form
+  document.getElementById('edit-pgn').value='';
+  document.getElementById('edit-pgn-error').textContent='';
+  document.getElementById('edit-pgn-success').textContent='';
   ['sub-fen','sub-best','sub-ok','sub-desc','sub-notes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('sub-error').textContent='';
   editSubs=JSON.parse(JSON.stringify(p.sub_puzzles||[]));
@@ -585,10 +767,7 @@ function closeEdit(){document.getElementById('edit-modal').classList.remove('ope
 
 function renderSubList(){
   const list=document.getElementById('sub-list');
-  if(!editSubs.length){
-    list.innerHTML='<div style="font-size:0.65rem;color:var(--muted);margin-bottom:0.6rem;padding:0.4rem 0;">No sub-puzzles yet.</div>';
-    return;
-  }
+  if(!editSubs.length){list.innerHTML='<div style="font-size:0.65rem;color:var(--muted);margin-bottom:0.6rem;padding:0.4rem 0;">No sub-puzzles yet.</div>';return;}
   list.innerHTML=editSubs.map((s,i)=>{
     const bestSan=(s.best_moves||[]).map(m=>uciToSan(s.fen,m)).join(' / ');
     const label=s.description?s.description.split('\n')[0].slice(0,40):bestSan;
@@ -624,26 +803,17 @@ function toggleSubItem(id){const b=document.getElementById(id);if(b)b.classList.
 
 function editSubField(i,field,value){
   if(!editSubs[i])return;
-  if(field==='best_moves_raw'){
-    editSubs[i].best_moves=value.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
-  }else if(field==='ok_moves_raw'){
-    editSubs[i].ok_moves=value.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
-  }else{
-    editSubs[i][field]=value;
-  }
+  if(field==='best_moves_raw') editSubs[i].best_moves=value.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+  else if(field==='ok_moves_raw') editSubs[i].ok_moves=value.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+  else editSubs[i][field]=value;
 }
 
 function moveSubPuzzle(i,dir){
-  const j=i+dir;
-  if(j<0||j>=editSubs.length)return;
-  [editSubs[i],editSubs[j]]=[editSubs[j],editSubs[i]];
-  renderSubList();
+  const j=i+dir;if(j<0||j>=editSubs.length)return;
+  [editSubs[i],editSubs[j]]=[editSubs[j],editSubs[i]];renderSubList();
 }
 
-function removeSubPuzzle(i){
-  editSubs.splice(i,1);
-  renderSubList();
-}
+function removeSubPuzzle(i){editSubs.splice(i,1);renderSubList();}
 
 function addSubPuzzle(){
   const fen=document.getElementById('sub-fen').value.trim();
@@ -664,6 +834,7 @@ function addSubPuzzle(){
 
 function saveEdit(){
   const id=document.getElementById('edit-id').value;
+  const title=document.getElementById('edit-title').value.trim();
   const fen=document.getElementById('edit-fen').value.trim();
   const best=document.getElementById('edit-best').value.trim();
   const ok=document.getElementById('edit-ok').value.trim();
@@ -675,7 +846,6 @@ function saveEdit(){
   const fenCheck=validateFen(fen);if(!fenCheck.ok){errEl.textContent='Invalid FEN: '+fenCheck.err;return;}
   const bestCheck=parseMoves(fen,best);if(!bestCheck.ok||!bestCheck.moves.length){errEl.textContent='Best moves error: '+(bestCheck.err||'required');return;}
   const okCheck=parseMoves(fen,ok);if(!okCheck.ok){errEl.textContent='Acceptable moves error: '+okCheck.err;return;}
-  // Validate all sub-puzzles
   for(let i=0;i<editSubs.length;i++){
     const s=editSubs[i];
     const sf=validateFen(s.fen);if(!sf.ok){errEl.textContent=`Sub-puzzle ${i+1}: invalid FEN`;return;}
@@ -683,7 +853,7 @@ function saveEdit(){
     for(const m of s.best_moves){const mv=validateUci(s.fen,m);if(!mv.ok){errEl.textContent=`Sub-puzzle ${i+1}: illegal move "${m}"`;return;}}
   }
   const puzzles=loadPuzzles().map(p=>p.id===id
-    ?{...p,fen,best_moves:bestCheck.moves,ok_moves:okCheck.moves,description:desc,answer_notes:notes,sub_puzzles:editSubs}
+    ?{...p,title,fen,best_moves:bestCheck.moves,ok_moves:okCheck.moves,description:desc,answer_notes:notes,sub_puzzles:editSubs}
     :p);
   savePuzzles(puzzles);
   closeEdit();
@@ -708,7 +878,6 @@ function importAll(event){
   reader.onload=(e)=>{
     try{
       const raw=JSON.parse(e.target.result);
-      // Support old formats: plain array, or {puzzles:[...], groups:[...]}
       const incoming=Array.isArray(raw)?raw:(raw.puzzles||[]);
       const existing=loadPuzzles();
       const existIds=new Set(existing.map(p=>p.id));
@@ -718,14 +887,7 @@ function importAll(event){
         if(!p.fen||(!p.best_moves&&!p.best_move)){skipped++;continue;}
         const key=p.fen+'|'+(p.best_moves||[p.best_move]).join(',');
         if(existIds.has(p.id)||existKeys.has(key)){skipped++;continue;}
-        existing.push({
-          id:p.id||uid(),fen:p.fen,
-          best_moves:p.best_moves||[p.best_move],
-          ok_moves:p.ok_moves||[],
-          description:p.description||'',
-          answer_notes:p.answer_notes||'',
-          sub_puzzles:p.sub_puzzles||[]
-        });
+        existing.push({id:p.id||uid(),title:p.title||'',fen:p.fen,best_moves:p.best_moves||[p.best_move],ok_moves:p.ok_moves||[],description:p.description||'',answer_notes:p.answer_notes||'',sub_puzzles:p.sub_puzzles||[]});
         existIds.add(p.id);existKeys.add(key);added++;
       }
       savePuzzles(existing);
